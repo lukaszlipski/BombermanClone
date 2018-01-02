@@ -1,0 +1,23 @@
+{
+  "name": "bombermanclone",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lukaszlipski/BombermanClone.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/lukaszlipski/BombermanClone/issues"
+  },
+  "homepage": "https://github.com/lukaszlipski/BombermanClone#readme",
+  "dependencies": {
+    "ws": "^3.3.3"
+  }
+}
