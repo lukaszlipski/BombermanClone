@@ -1,30 +1,19 @@
 "use strict";
 
-// Initialize gl context and client socket
-//var gl = InitWebGL();
-//var ClientSocket = InitWebSocket();
-
 Core.InitWebGL('GameCanvas');
 Core.InitWebSocket();
 
-let VertexBuffer = Core.Context.createBuffer();
-let Vao = Core.Context.createVertexArray();
-
-let Vertices = [ 
-    -0.5,  0.5,
-    -0.5, -0.5,
-     0.5, -0.5
+let Offets = [
+    0.0, 0.15, 0.3
 ];
+
+let buffer;
 
 let shader = new ShaderProgram('shader.vs','shader.fs', program => {
 
-    Core.Context.bindVertexArray(Vao);
-    Core.Context.bindBuffer(Core.Context.ARRAY_BUFFER, VertexBuffer);
-    Core.Context.bufferData(Core.Context.ARRAY_BUFFER, new Float32Array(Vertices), Core.Context.STATIC_DRAW);
-    Core.Context.enableVertexAttribArray(Core.Context.getAttribLocation(shader.Program, "aPosition"));
-    Core.Context.vertexAttribPointer(Core.Context.getAttribLocation(shader.Program, "aPosition"), 2, Core.Context.FLOAT, false, 0, 0);
-    Core.Context.bindVertexArray(null);
-    
+    buffer = new InstancedBuffer(shader);
+    buffer.SetData(Offets);
+
 });
 
 Core.Context.viewport(0, 0, 800, 600);
@@ -36,8 +25,11 @@ function Frame(time) {
     if(shader.IsValid) {
 
         shader.Bind();
-        Core.Context.bindVertexArray(Vao);
-        Core.Context.drawArrays(Core.Context.TRIANGLES, 0, 3);
+        buffer.Bind();
+        // Core.Context.bindVertexArray(Vao);
+        // Core.Context.drawArrays(Core.Context.TRIANGLES, 0, 3);
+        // Core.Context.drawElementsInstanced(Core.Context.TRIANGLES, 6, Core.Context.UNSIGNED_BYTE, 0, 3);
+        Core.Context.drawArraysInstanced(Core.Context.TRIANGLE_FAN, 0, 4, 3);
 
     }
 }

@@ -1,3 +1,5 @@
+"use strict";
+
 class Shader {
 
     constructor(filename, type, callback) {
@@ -58,7 +60,7 @@ class Shader {
         return false;
     }
 
-    ClearShader() {
+    Clear() {
         Core.Context.deleteShader(shader);
     }
 }
@@ -113,7 +115,7 @@ class ShaderProgram {
         return this.Shader[0].Loaded === true && this.Shader[1].Loaded === true;
     }
 
-    ClearProgram() {
+    Clear() {
         this.Shader[0].ClearShader();
         this.Shader[1].ClearShader();
         Core.Context.deleteProgram(this.Program);

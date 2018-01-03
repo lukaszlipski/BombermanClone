@@ -1,3 +1,5 @@
+"use strict";
+
 let Core = {
     Canvas : null,
     Context : null,
