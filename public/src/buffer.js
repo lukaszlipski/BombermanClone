@@ -1,9 +1,11 @@
+"use strict";
+
 let Vertices = [ 
     // Pos         UV
-      -0.5,  0.5,  0.0, 1.0,
-      -0.5, -0.5,  0.0, 0.0,
-       0.5, -0.5,  1.0, 0.0,
-       0.5,  0.5,  1.0, 1.0
+       0,    20,  0.0, 1.0,
+       0,     0,  0.0, 0.0,
+       20,    0,  1.0, 0.0,
+       20,   20,  1.0, 1.0
 ];
 
 let VertexFormat = [
@@ -12,7 +14,7 @@ let VertexFormat = [
 ];
 
 let InstancedVertexFormat = [
-    { name : 'aOffset', type : 'float', size : 1, offset : 0 },
+    { name : 'aOffset', type : 'float', size : 2, offset : 0 },
 ]
 
 function GetWebGLType(type) {
@@ -29,6 +31,7 @@ class Buffer {
         this.VertexBuffer = Core.Context.createBuffer();
         this.VertexArrayObjectBuffer = Core.Context.createVertexArray();
         this.Shader = shader;
+        this.Type = Core.Context.TRIANGLE_FAN;
         this.CreateBuffer();
     }
 
@@ -77,14 +80,16 @@ class InstancedBuffer extends Buffer {
     SetData(data) {
         if(data.length > 0)
         {
-            this.Length = data.length;
+            
             super.Bind();
             Core.Context.bindBuffer(Core.Context.ARRAY_BUFFER, this.OffsetBuffer);
             Core.Context.bufferData(Core.Context.ARRAY_BUFFER, new Float32Array(data), Core.Context.STATIC_DRAW);
 
+            let strideBytes = 0;
             let stride = 0;
             InstancedVertexFormat.forEach((value,index,array)=>{
-                stride += GetWebGLType(value.type).size;
+                strideBytes += GetWebGLType(value.type).size * value.size;
+                stride += value.size;
             });
 
             InstancedVertexFormat.forEach((value,index,array)=>{
@@ -96,9 +101,11 @@ class InstancedBuffer extends Buffer {
                     return;
                 }
                 Core.Context.enableVertexAttribArray(loc);
-                Core.Context.vertexAttribPointer(loc, value.size, GetWebGLType(value.type).type, false, stride, value.offset);
+                Core.Context.vertexAttribPointer(loc, value.size, GetWebGLType(value.type).type, false, strideBytes, value.offset);
                 Core.Context.vertexAttribDivisor(loc, 1);
             });
+
+            this.Length = data.length/stride;
 
             super.Unbind();
         }

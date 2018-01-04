@@ -2,12 +2,17 @@
 
 in vec2 aPosition;
 in vec2 aTexCoord;
-in float aOffset;
+in vec2 aOffset;
+
+uniform mat4 uProjection;
+uniform mat4 uTranslation;
 
 out vec3 fsColor;
 
 void main()
 {
-    gl_Position = vec4(aPosition + aOffset,0,1);
-    fsColor = vec3(aTexCoord.x);
+    vec4 Pos = vec4(aPosition,0,1);
+    Pos.xy += aOffset;
+    gl_Position = uProjection * uTranslation * Pos;
+    fsColor = vec3(aTexCoord,1);
 }
