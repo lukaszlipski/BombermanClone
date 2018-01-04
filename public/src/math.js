@@ -1,3 +1,4 @@
+"use strict";
 
 function GetOrthoProjection(f, n, l, r, t, b) {
     return [
@@ -5,6 +6,15 @@ function GetOrthoProjection(f, n, l, r, t, b) {
          0,            2/(t-b),      0,           0,
          0,            0,           -2/(f-n),     0,
         -(r+l)/(r-l), -(t+b)/(t-b), -(f+n)/(f-n), 1
+    ];
+}
+
+function GetIdentityMatrix() {
+    return [
+        1, 0, 0, 0,
+        0, 1, 0, 0,
+        0, 0, 1, 0,
+        0, 0, 0, 1
     ];
 }
 

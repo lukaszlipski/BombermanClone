@@ -6,6 +6,8 @@ in vec2 aOffset;
 
 uniform mat4 uProjection;
 uniform mat4 uTranslation;
+uniform float uTest;
+uniform vec4 uTest2;
 
 out vec3 fsColor;
 

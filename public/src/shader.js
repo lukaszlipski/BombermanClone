@@ -72,6 +72,7 @@ class ShaderProgram {
         this.Callback = callback;
         this.Shader = [];
         this.IsValid = false;
+        this.Uniforms = [];
         
         this.Shader[0] = new Shader(vertex, Core.Context.VERTEX_SHADER, shader => {
             if(this.CheckIfComplete()) {
@@ -100,6 +101,7 @@ class ShaderProgram {
         Core.Context.linkProgram(this.Program);
         if(Core.Context.getProgramParameter(this.Program, Core.Context.LINK_STATUS)) {
             this.IsValid = true;
+            this.GetAllUniforms();
             if(this.Callback && {}.toString.call(this.Callback) === '[object Function]')
             {
                 this.Callback(this);     
@@ -114,6 +116,15 @@ class ShaderProgram {
     CheckIfComplete() {
         return this.Shader[0].Loaded === true && this.Shader[1].Loaded === true;
     }
+
+    GetAllUniforms() {
+        let UniformNumber = Core.Context.getProgramParameter(this.Program, Core.Context.ACTIVE_UNIFORMS);
+        for(let i=0;i<UniformNumber;i++) {
+            let Uniform = Core.Context.getActiveUniform(this.Program, i);
+            this.Uniforms.push(Uniform);
+        }
+    }
+
 
     Clear() {
         this.Shader[0].ClearShader();

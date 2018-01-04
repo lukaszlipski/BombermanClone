@@ -14,7 +14,7 @@ let VertexFormat = [
 ];
 
 let InstancedVertexFormat = [
-    { name : 'aOffset', type : 'float', size : 2, offset : 0 },
+    { name : 'aOffset', type : 'float', size : 2, offset : 0*4 },
 ]
 
 function GetWebGLType(type) {
@@ -104,7 +104,7 @@ class InstancedBuffer extends Buffer {
                 Core.Context.vertexAttribPointer(loc, value.size, GetWebGLType(value.type).type, false, strideBytes, value.offset);
                 Core.Context.vertexAttribDivisor(loc, 1);
             });
-
+            
             this.Length = data.length/stride;
 
             super.Unbind();
