@@ -7,6 +7,8 @@ let Core = {
     DeltaTime : null,
     Width : -1,
     Height : -1,
+    KeyboardKeys : new Array(233),
+    MouseKeys : new Array(3),
 
     InitWebGL : function(canvasName) {
         // Init webgl context
@@ -21,6 +23,9 @@ let Core = {
             return false;
         }
         console.log('WebGL Loaded');
+
+        Core.Context.viewport(0, 0, Core.Width, Core.Height);
+        
         return true;
     },
 
@@ -38,7 +43,151 @@ let Core = {
             console.log(message.data);    
         };
         return true;
+    },
+
+    InitControls : function() {
+        
+        for(let i=0; i<this.KeyboardKeys.length;++i) {
+            this.KeyboardKeys[i] = 0;
+        }
+
+        for(let i=0; i<this.MouseKeys.length;++i) {
+            this.MouseKeys[i] = 0;
+        }
+
+        document.addEventListener('keydown', (event)=>{
+            this.KeyboardKeys[event.keyCode] = 1;
+        }, false);
+
+        document.addEventListener('keyup', (event)=>{
+            this.KeyboardKeys[event.keyCode] = 0;
+        }, false);
+
+        document.addEventListener('mousedown', (event)=>{
+            this.MouseKeys[event.button] = 1;
+        }, false);
+        document.addEventListener('mouseup', (event)=>{
+            this.MouseKeys[event.button] = 0;
+        }, false);
+
+    },
+
+    IsKeyPressed : function(key) {
+        return this.KeyboardKeys[key];
+    },
+
+    IsMousePressed : function(btn) {
+        return this.MouseKeys[btn];
     }
 
 }
 
+
+
+// Key & mouse defines
+let MouseButton = {
+    Left : 0,
+    Middle : 1,
+    Right : 2
+};
+
+let KeyboardKey = {
+        Backspace : 8,
+        Tab : 9,
+        Enter : 13,
+        Shift : 16,
+        Ctrl : 17,
+        Alt : 18,
+        Pause : 19,
+        CapsLock : 20,
+        Esc : 27,
+        Space : 32,
+        PageUp : 33,
+        PageDown : 34,
+        End : 35,
+        Home : 36,
+        Left : 37,
+        Up : 38,
+        Right : 39,
+        Down : 40,
+        Insert : 45,
+        Delete : 46,
+        Zero : 48,
+        One : 49,
+        Two : 50,
+        Three : 51,
+        Four : 52,
+        Five : 53,
+        Six : 54,
+        Seven : 55,
+        Eight : 56,
+        Nine : 57,
+        A : 65,
+        B : 66,
+        C : 67,
+        D : 68,
+        E : 69,
+        F : 70,
+        G : 71,
+        H : 72,
+        I : 73,
+        J : 74,
+        K : 75,
+        L : 76,
+        M : 77,
+        N : 78,
+        O : 79,
+        P : 80,
+        Q : 81,
+        R : 82,
+        S : 83,
+        T : 84,
+        U : 85,
+        V : 86,
+        W : 87,
+        X : 88,
+        Y : 89,
+        Z : 90,
+        LeftWindow : 91,
+        RightWindow : 92,
+        Select : 93,
+        Numpad : {
+            Zero : 96,
+            One : 97,
+            Two : 98,
+            Three : 99,
+            Four : 100,
+            Five : 101,
+            Six : 102,
+            Seven : 103,
+            Eight : 104,
+            Nine : 105,
+            Multiply : 106,
+            Add : 107,
+            Subtract : 109,
+            Point : 110,
+            Divide : 111
+        },
+        F1 : 112,
+        F2 : 113,
+        F3 : 114,
+        F4 : 115,
+        F5 : 116,
+        F6 : 117,
+        F7 : 118,
+        F8 : 119,
+        F9 : 120,
+        NumLock : 144,
+        ScrollLock : 145,
+        SemiColon : 186,
+        EqualSign : 187,
+        Comma : 188,
+        Dash : 189,
+        Period : 190,
+        ForwardSlash : 191,
+        GraveAccent : 192,
+        OpenBracket : 219,
+        BackSlash : 220,
+        CloseBracket : 221,
+        SingleQuote : 222
+}

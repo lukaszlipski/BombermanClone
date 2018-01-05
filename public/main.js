@@ -2,12 +2,15 @@
 
 Core.InitWebGL('GameCanvas');
 Core.InitWebSocket();
+Core.InitControls();
+
+let TileSize = Core.Width/40; // 40x30
 
 let Offets = [];
 
-for(let x=0;x<800;x+=20) {
-    for(let y=0;y<600;y+=20) {
-        Offets.push(x,y);
+for(let x=0; x<Core.Width - 2*TileSize; x+=TileSize) {
+    for(let y=0; y<Core.Height - 2*TileSize; y+=TileSize) {
+        Offets.push(x, y);
     }
 }
 
@@ -19,12 +22,10 @@ let shader = new ShaderProgram('shader.vs','shader.fs', program => {
     buffer.SetData(Offets);
 
     material = new Material(shader);
-    material.SetParam('uProjection', GetOrthoProjection(0 ,100 ,0 , 800 ,0 ,600));
+    material.SetParam('uProjection', GetOrthoProjection(0 ,100 ,0 , Core.Width ,0 ,Core.Height));
+    material.SetParam('uScale', GetScale(TileSize,TileSize,1));
+    material.SetParam('uTranslation', GetTranslation(TileSize,TileSize,0));
 });
-
-Core.Context.viewport(0, 0, 800, 600);
-
-
 
 window.requestAnimationFrame(Frame);
 function Frame(time) {
