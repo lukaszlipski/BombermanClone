@@ -7,15 +7,14 @@ in vec2 aOffset;
 uniform mat4 uProjection;
 uniform mat4 uTranslation;
 uniform mat4 uScale;
-uniform float uTest;
-uniform vec4 uTest2;
 
-out vec3 fsColor;
+out vec2 fsTexCoord;
 
 void main()
 {
     vec4 Pos = uScale * vec4(aPosition,0,1);
     Pos.xy += aOffset;
     gl_Position = uProjection * uTranslation * Pos;
-    fsColor = vec3(aTexCoord,1);
+
+    fsTexCoord = aTexCoord;
 }

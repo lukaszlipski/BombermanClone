@@ -4,10 +4,12 @@ class Material {
     constructor(shader) {
         this.Shader = shader;
         this.ClearAndSetParams();
+        this.TextureCount = 0;
     }
 
     ClearAndSetParams() {
         this.Parameters = [];
+        this.TextureCount = 0;
         this.Shader.Uniforms.forEach((value, index, array)=>{
             let location = Core.Context.getUniformLocation(this.Shader.Program, value.name);
             switch(value.type) {
@@ -21,6 +23,10 @@ class Material {
                 }
                 case Core.Context.FLOAT_VEC4: {
                     this.Parameters.push(new Vec3Param(value.name, location));
+                    break;
+                }
+                case Core.Context.SAMPLER_2D: {
+                    this.Parameters.push(new TexParam(value.name, location, this.TextureCount++));
                     break;
                 }
                 default:
@@ -118,6 +124,29 @@ class Vec3Param extends IParam {
 
     Bind() {
         Core.Context.uniform4f(this.Location, this.Value[0], this.Value[1], this.Value[2], this.Value[3]);
+    }
+
+}
+
+class TexParam extends IParam {
+    constructor(name, location, index) {
+        super(name, location);
+        this.Value = null;
+        this.Index = index;
+        this.SetValue('dummy.png');
+    }
+    
+    SetValue(value) {
+        TexManager.FindImg(value,(loadedTexture)=>{
+            this.Value = loadedTexture;
+        });
+    }
+
+    Bind() {
+        if(this.Value == null) { return; }
+        Core.Context.activeTexture(Core.Context.TEXTURE0 + this.Index);
+        Core.Context.uniform1i(this.Location, this.Index);
+        Core.Context.bindTexture(Core.Context.TEXTURE_2D, this.Value);
     }
 
 }
