@@ -12,6 +12,8 @@ let Core = {
     ProjectionMatrix : null,
     PlayerIndex : -1,
     ServerStatus : null,
+    Map : null,
+    MapLoadedCb : null,
 
     InitWebGL : function(canvasName) {
         // Init webgl context
@@ -53,7 +55,16 @@ let Core = {
                 }
                 case 'UPD':
                 {
-                    this.ServerStatus = data[1] + '|' + data[2] + '|' + data[3];
+                    this.ServerStatus = data[1] + '|' + data[2] + '|' + data[3] + '|' + data[4];
+                    break;
+                }
+                case 'MAP':
+                {
+                    this.Map = data[1];
+                    if(this.MapLoadedCb && {}.toString.call(this.MapLoadedCb) === '[object Function]')
+                    {
+                        this.MapLoadedCb(this.Map);     
+                    }
                     break;
                 }
                 default:

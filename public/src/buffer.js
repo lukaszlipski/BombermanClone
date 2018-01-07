@@ -15,6 +15,7 @@ let VertexFormat = [
 
 let InstancedVertexFormat = [
     { name : 'aOffset', type : 'float', size : 2, offset : 0*4 },
+    { name : 'aTex', type : 'float', size : 1, offset : 2*4 }
 ]
 
 function GetWebGLType(type) {

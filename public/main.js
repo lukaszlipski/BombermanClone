@@ -8,39 +8,20 @@ TexManager.Init();
 
 let TileSize = Core.Width/20; // 20x15
 
-let Offets = [];
-
-for(let x=0; x<Core.Width; x+=TileSize) {
-    for(let y=0; y<Core.Height; y+=TileSize) {
-        Offets.push(x, y);
-    }
-}
-
 let buffer;
 let material;
 
 let sprite = new Sprite(TileSize/2,TileSize/2);
 sprite.SetPosition(78,50);
 
-ShaderProgramManager.Find('shader.vs','shader.fs', program => {
-    
-    buffer = new InstancedBuffer(program);
-    buffer.SetData(Offets);
-
-    material = new Material(program);
-    material.SetParam('uProjection', GetOrthoProjection(0 ,100 ,0 , Core.Width ,0 ,Core.Height));
-    material.SetParam('uScale', GetScale(TileSize,TileSize,1));
-    //material.SetParam('uTranslation', GetTranslation(TileSize,TileSize,0));
-    material.SetParam('uTex2', 'ground.png');
-
- })
-
+let bg = new BackgroundSprite(TileSize,TileSize);
 
 
 window.requestAnimationFrame(Frame);
 function Frame(time) {
     window.requestAnimationFrame(Frame);
 
+        
         let actions = '0000';
         if(Core.IsKeyPressed(KeyboardKey.D))
         {
@@ -73,10 +54,8 @@ function Frame(time) {
             Core.ServerStatus = null;
         }
 
-        buffer.Bind();
-        material.Bind();
-        buffer.Draw();
 
+        bg.Draw();
         sprite.Draw();
 
 }

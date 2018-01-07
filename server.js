@@ -1,6 +1,9 @@
 const http = require('http');
 const express = require('express');
 const WebSocket = require('ws');
+const fs = require('fs');
+const Player = require('./player');
+const Game = require('./game');
 
 var app = express();
 app.use(express.static('public'));
@@ -13,41 +16,34 @@ app.listen(8000);
 
 const wss = new WebSocket.Server({ port: 8080 });
 
-class Player {
-    constructor(socket, index) {
-        this.Index = index;
-        this.Socket = socket;
-        this.Input = [];
-        this.CurrentPosition = [0,0];
-        this.Velocity = [3,3];
-    }
-}
-
-let Game = {
-    Players : [],
-    Size : 0
-}
+let data = LoadMap('map1');
+let game = new Game(data);
 
 wss.on('connection', (ws,req) => {
+
     console.log('Client connected');
-    if(Game.Size >= 4) { ws.close(); return; } // Max 4 players
-    ws.Index = Game.Size++;
+    if(game.Size >= 4) { ws.close(); return; } // Max 4 players
+    ws.Index = game.Size++;
 
     let NewPlayer = new Player(ws, ws.Index);
-    Game.Players.push(NewPlayer);
+    NewPlayer.SetPosition(game.TileSize * game.Spawns[ws.Index].PosX, game.TileSize * game.Spawns[ws.Index].PosY);
+    console.log(game.Spawns[ws.Index].PosX);
+    game.Players.push(NewPlayer);
 
     ws.send('WLC|' + NewPlayer.Index); // Send player his index
 
+    ws.send('MAP|' + data);
+
     ws.on('close', () => { 
-        delete Game.Players[ws.Input];
-        Game.Players[ws.Input] = null;
+        delete game.Players[ws.Input];
+        game.Players[ws.Input] = null;
         console.log('Close ' + ws.Index); 
     });
     
     ws.on('message', data => {
         let pkg = data.substr(0,3);
         if(pkg == 'ACT') {
-            Game.Players[ws.Index].Input.push(data.substr(3,data.length));
+            game.Players[ws.Index].Input.push(data.substr(3,data.length));
         }
     });
 
@@ -59,7 +55,7 @@ wss.on('connection', (ws,req) => {
 setInterval(() => { 
 
     let update = 'UPD';    
-    Game.Players.forEach( (player,index,array) => {
+    game.Players.forEach( (player,index,array) => {
         if(player == undefined) return;
 
         player.Input.forEach((input)=>{
@@ -86,7 +82,7 @@ setInterval(() => {
         update += '|' + player.Socket.Index + ',' + player.CurrentPosition[0] + ',' + player.CurrentPosition[1];
     });
 
-    Game.Players.forEach( (player,index,array) => {
+    game.Players.forEach( (player,index,array) => {
         if(player !== null) 
         {
             try {
@@ -98,3 +94,16 @@ setInterval(() => {
     });
 
 }, 16.6);
+
+
+function LoadMap(name) {
+    let path = 'public/maps/' + name;
+    if(!fs.existsSync(path))
+    {
+        console.log('Map ' + name + ' dont exists');
+        return null;
+    }
+    let data = fs.readFileSync(path);
+    return data;
+
+}
