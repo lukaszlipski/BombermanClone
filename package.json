@@ -18,6 +18,7 @@
   },
   "homepage": "https://github.com/lukaszlipski/BombermanClone#readme",
   "dependencies": {
+    "express": "^4.16.2",
     "ws": "^3.3.3"
   }
 }

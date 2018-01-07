@@ -11,6 +11,17 @@ let TexManager = {
     AddImg : function(name,callback) {
         let image = new Image();
         image.onload = () => {
+
+            for(let i=0;i<this.Textures.length;++i) {
+                if(this.Textures[i].name == name) {
+                    if(callback && {}.toString.call(callback) === '[object Function]')
+                    {
+                        callback(this.Textures[i].img);     
+                        return;
+                    }
+                }
+            }
+
             let tex = Core.Context.createTexture();
             Core.Context.bindTexture(Core.Context.TEXTURE_2D, tex);
             Core.Context.texImage2D(Core.Context.TEXTURE_2D, 0, Core.Context.RGBA, Core.Context.RGBA, Core.Context.UNSIGNED_BYTE, image);
@@ -19,7 +30,7 @@ let TexManager = {
             Core.Context.texParameteri(Core.Context.TEXTURE_2D, Core.Context.TEXTURE_MIN_FILTER, Core.Context.NEAREST);
             Core.Context.texParameteri(Core.Context.TEXTURE_2D, Core.Context.TEXTURE_MAG_FILTER, Core.Context.NEAREST);
             Core.Context.bindTexture(Core.Context.TEXTURE_2D, null);
-            this.Textures.unshift({ name : name, img : tex });
+            this.Textures.push({ name : name, img : tex });
             if(callback && {}.toString.call(callback) === '[object Function]')
             {
                 callback(tex);     

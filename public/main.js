@@ -26,7 +26,8 @@ let shader = new ShaderProgram('shader.vs','shader.fs', program => {
     material.SetParam('uProjection', GetOrthoProjection(0 ,100 ,0 , Core.Width ,0 ,Core.Height));
     material.SetParam('uScale', GetScale(TileSize,TileSize,1));
     //material.SetParam('uTranslation', GetTranslation(TileSize,TileSize,0));
-    material.SetParam('uTex', 'ground.png');
+    material.SetParam('uTex', 'dummy.png');
+    material.SetParam('uTex2', 'ground.png');
 });
 
 window.requestAnimationFrame(Frame);

@@ -133,12 +133,17 @@ class TexParam extends IParam {
         super(name, location);
         this.Value = null;
         this.Index = index;
+        this.CurrentTextureName = '';
         this.SetValue('dummy.png');
     }
     
     SetValue(value) {
+        this.CurrentTextureName = value;
         TexManager.FindImg(value,(loadedTexture)=>{
-            this.Value = loadedTexture;
+            if(value == this.CurrentTextureName) {
+                this.Value = loadedTexture;
+            }
+            console.log(value);
         });
     }
 
