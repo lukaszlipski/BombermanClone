@@ -59,6 +59,10 @@ class Buffer {
         Core.Context.bindVertexArray(this.VertexArrayObjectBuffer);
     }
 
+    Draw() {
+        Core.Context.drawArrays(this.Type, 0, 4);
+    }
+
     Unbind() {
         Core.Context.bindVertexArray(null);
     }
@@ -109,6 +113,10 @@ class InstancedBuffer extends Buffer {
 
             super.Unbind();
         }
+    }
+
+    Draw() {
+        Core.Context.drawArraysInstanced(this.Type, 0, 4, this.Length);
     }
 
     Clear() {

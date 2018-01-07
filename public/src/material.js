@@ -143,7 +143,7 @@ class TexParam extends IParam {
             if(value == this.CurrentTextureName) {
                 this.Value = loadedTexture;
             }
-            console.log(value);
+
         });
     }
 

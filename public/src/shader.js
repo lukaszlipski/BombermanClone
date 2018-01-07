@@ -1,5 +1,59 @@
 "use strict";
 
+let ShaderProgramManager = {
+    Shaders : [],
+    Init : function() {
+        this.Shaders = [];
+    },
+
+    Add : function(vertex, fragment, callback) {
+        let shader = new ShaderProgram(vertex,fragment, (shader) => {
+
+            let result = null;
+            for(let i=0; i<this.Shaders.length; ++i) {
+                if(this.Shaders[i].vs == vertex && this.Shaders[i].fs == fragment) {
+                    result = this.Shaders[i];
+                    break;
+                }
+            }    
+
+            if(result == null) {
+                this.Shaders.push({ vs: vertex, fs: fragment, program : shader});   
+                if(callback && {}.toString.call(callback) === '[object Function]')
+                {
+                    callback(shader);     
+                }
+            } else {
+                if(callback && {}.toString.call(callback) === '[object Function]')
+                {
+                    callback(result.program);     
+                }
+            }
+
+        });
+    },
+
+    Find : function(vertex, fragment, callback) {
+        let result = null;
+        for(let i=0; i<this.Shaders.length; ++i) {
+            if(this.Shaders[i].vs == vertex && this.Shaders[i].fs == fragment) {
+                result = this.Shaders[i];
+                break;
+            }
+        }
+
+        if(result == null) {
+            this.Add(vertex, fragment, callback);
+        } else {
+            if(callback && {}.toString.call(callback) === '[object Function]')
+            {
+                callback(result.program);     
+            }
+        }
+
+    }
+}
+
 class Shader {
 
     constructor(filename, type, callback) {

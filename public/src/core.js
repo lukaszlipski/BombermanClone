@@ -9,6 +9,9 @@ let Core = {
     Height : -1,
     KeyboardKeys : new Array(233),
     MouseKeys : new Array(3),
+    ProjectionMatrix : null,
+    PlayerIndex : -1,
+    ServerStatus : null,
 
     InitWebGL : function(canvasName) {
         // Init webgl context
@@ -25,7 +28,7 @@ let Core = {
         console.log('WebGL Loaded');
 
         Core.Context.viewport(0, 0, Core.Width, Core.Height);
-        
+        this.ProjectionMatrix = GetOrthoProjection(0 ,100 ,0 , Core.Width ,0 ,Core.Height);
         return true;
     },
 
@@ -40,7 +43,25 @@ let Core = {
             console.log(error);
         };
         Core.ClientSocket.onmessage = message => {
-            console.log(message.data);    
+
+            let data = message.data.split('|');
+            switch(data[0]) {
+                case 'WLC':
+                {
+                    this.PlayerIndex = data[1];
+                    break;
+                }
+                case 'UPD':
+                {
+                    this.ServerStatus = data[1] + '|' + data[2] + '|' + data[3];
+                    break;
+                }
+                default:
+                {
+                    console.error('Bad header');
+                }
+            }
+
         };
         return true;
     },
