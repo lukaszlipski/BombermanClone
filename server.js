@@ -16,34 +16,40 @@ app.listen(8000);
 
 const wss = new WebSocket.Server({ port: 8080 });
 
+let AllPlayers = [];
+
 let data = LoadMap('map1');
 let game = new Game(data);
 
 wss.on('connection', (ws,req) => {
 
     console.log('Client connected');
-    if(game.Size >= 4) { ws.close(); return; } // Max 4 players
-    ws.Index = game.Size++;
 
-    let NewPlayer = new Player(ws, ws.Index);
-    NewPlayer.SetPosition(game.TileSize * game.Spawns[ws.Index].PosX, game.TileSize * game.Spawns[ws.Index].PosY);
-    console.log(game.Spawns[ws.Index].PosX);
-    game.Players.push(NewPlayer);
+    // Set new player
+    let player = new Player(ws,AllPlayers.length);
+    AllPlayers.push(player);
+    ws.ID = player.ID;
 
-    ws.send('WLC|' + NewPlayer.Index); // Send player his index
+    if(!game.AddPlayer(player)) {
+        console.log('lel');
+        ws.close(); return;
+    }
+    
+    game.StartGame();
 
-    ws.send('MAP|' + data);
 
     ws.on('close', () => { 
-        delete game.Players[ws.Input];
-        game.Players[ws.Input] = null;
-        console.log('Close ' + ws.Index); 
+        if(AllPlayers[ws.ID].CurrentGame != null) {
+            AllPlayers[ws.ID].CurrentGame.RemovePlayer(AllPlayers[ws.ID]);
+        }
+        console.log('Close ' + ws.ID); 
     });
     
     ws.on('message', data => {
         let pkg = data.substr(0,3);
         if(pkg == 'ACT') {
-            game.Players[ws.Index].Input.push(data.substr(3,data.length));
+            //game.Players[ws.Index].Input.push(data.substr(3,data.length));
+            AllPlayers[ws.ID].Input.push(data.substr(3,data.length));
         }
     });
 
@@ -52,48 +58,13 @@ wss.on('connection', (ws,req) => {
 });
 
 // game loop
+
+let delta = 16.6;
 setInterval(() => { 
 
-    let update = 'UPD';    
-    game.Players.forEach( (player,index,array) => {
-        if(player == undefined) return;
+    game.Update(delta / 1000);
 
-        player.Input.forEach((input)=>{
-            let deltaPos = [0,0];
-            if(input[0] == '1') {
-                deltaPos[0] +=3;
-            }
-            if(input[1] == '1') {
-                deltaPos[0] -=3;
-            }
-            if(input[2] == '1') {
-                deltaPos[1] -=3;
-            }
-            if(input[3] == '1') {
-                deltaPos[1] +=3;
-            }
-            player.CurrentPosition[0] += deltaPos[0];
-            player.CurrentPosition[1] += deltaPos[1];
-        });
-
-        // Clear input
-        player.Input = [];
-
-        update += '|' + player.Socket.Index + ',' + player.CurrentPosition[0] + ',' + player.CurrentPosition[1];
-    });
-
-    game.Players.forEach( (player,index,array) => {
-        if(player !== null) 
-        {
-            try {
-                player.Socket.send(update);
-            } catch(err) {
-                //console.log('Websocket error: %s', err); // WTF?
-            }
-        }
-    });
-
-}, 16.6);
+}, delta);
 
 
 function LoadMap(name) {

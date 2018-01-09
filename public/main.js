@@ -22,22 +22,21 @@ function Frame(time) {
     window.requestAnimationFrame(Frame);
 
         
-        let actions = '0000';
-        if(Core.IsKeyPressed(KeyboardKey.D))
-        {
+        let actions = '00000';
+        if(Core.IsKeyPressed(KeyboardKey.D)) {
             actions = ReplaceCharAt(actions,0,'1');
         }
-        if(Core.IsKeyPressed(KeyboardKey.A))
-        {
+        if(Core.IsKeyPressed(KeyboardKey.A)) {
             actions = ReplaceCharAt(actions,1,'1');
         }
-        if(Core.IsKeyPressed(KeyboardKey.W))
-        {
+        if(Core.IsKeyPressed(KeyboardKey.W)) {
             actions = ReplaceCharAt(actions,2,'1');
         }
-        if(Core.IsKeyPressed(KeyboardKey.S))
-        {
+        if(Core.IsKeyPressed(KeyboardKey.S)) {
             actions = ReplaceCharAt(actions,3,'1');
+        }
+        if(Core.IsKeyPressed(KeyboardKey.Space)) {
+            actions = ReplaceCharAt(actions,4,'1'); // TODO: add delay
         }
         
         Core.ClientSocket.send('ACT' + actions);
@@ -46,6 +45,7 @@ function Frame(time) {
         {
             let playersStatus = Core.ServerStatus.split('|');
             playersStatus.forEach(element => {
+                
                 let status = element.split(',');
                 if(Core.PlayerIndex == status[0]) {
                     sprite.SetPosition(status[1],status[2]);

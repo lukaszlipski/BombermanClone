@@ -48,6 +48,11 @@ let Core = {
 
             let data = message.data.split('|');
             switch(data[0]) {
+                case 'STR':
+                {
+                    console.log('game starts');
+                    break;
+                }
                 case 'WLC':
                 {
                     this.PlayerIndex = data[1];
@@ -110,7 +115,7 @@ let Core = {
 
     IsMousePressed : function(btn) {
         return this.MouseKeys[btn];
-    }
+    },
 
 }
 
