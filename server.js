@@ -31,7 +31,7 @@ wss.on('connection', (ws,req) => {
     ws.ID = player.ID;
 
     if(!game.AddPlayer(player)) {
-        console.log('lel');
+        console.log('Game is full');
         ws.close(); return;
     }
     

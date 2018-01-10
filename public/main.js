@@ -8,20 +8,16 @@ TexManager.Init();
 
 let TileSize = Core.Width/20; // 20x15
 
-let buffer;
-let material;
-
-let sprite = new Sprite(TileSize/2,TileSize/2);
-sprite.SetPosition(78,50);
-
 let bg = new BackgroundSprite(TileSize,TileSize);
 
+let players = new Array(4);
+for(let i=0; i<4;++i) {
+    players[i] = new Sprite(TileSize/2,TileSize/2);
+}
 
-window.requestAnimationFrame(Frame);
 function Frame(time) {
     window.requestAnimationFrame(Frame);
-
-        
+     
         let actions = '00000';
         if(Core.IsKeyPressed(KeyboardKey.D)) {
             actions = ReplaceCharAt(actions,0,'1');
@@ -47,16 +43,24 @@ function Frame(time) {
             playersStatus.forEach(element => {
                 
                 let status = element.split(',');
-                if(Core.PlayerIndex == status[0]) {
-                    sprite.SetPosition(status[1],status[2]);
+
+                if(status[0] != 'undefined') {
+                    players[status[0]].SetPosition(status[1],status[2]);
                 }
+                
             });
             Core.ServerStatus = null;
+
         }
 
 
         bg.Draw();
-        sprite.Draw();
+        players.forEach((player)=>{
+            if(player != null) {
+                player.Draw();
+            }
+        })
+        //sprite.Draw();
 
 }
 

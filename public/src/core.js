@@ -50,7 +50,7 @@ let Core = {
             switch(data[0]) {
                 case 'STR':
                 {
-                    console.log('game starts');
+                    window.requestAnimationFrame(Frame);
                     break;
                 }
                 case 'WLC':
@@ -61,6 +61,14 @@ let Core = {
                 case 'UPD':
                 {
                     this.ServerStatus = data[1] + '|' + data[2] + '|' + data[3] + '|' + data[4];
+                    break;
+                }
+                case 'BMB':
+                {
+                    console.log(data.length);
+                    for(let i=1;i<data.length;i++) {
+                        console.log(data[i]);
+                    }
                     break;
                 }
                 case 'MAP':
