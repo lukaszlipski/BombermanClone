@@ -12,7 +12,7 @@ let Core = {
     ProjectionMatrix : null,
     PlayerIndex : -1,
     ServerStatus : null,
-    Map : null,
+    Bombs : [],
     MapLoadedCb : null,
 
     InitWebGL : function(canvasName) {
@@ -65,18 +65,17 @@ let Core = {
                 }
                 case 'BMB':
                 {
-                    console.log(data.length);
+                    //console.log(data.length);
                     for(let i=1;i<data.length;i++) {
-                        console.log(data[i]);
+                        this.Bombs.push(data[i]);
                     }
                     break;
                 }
                 case 'MAP':
                 {
                     this.Map = data[1];
-                    if(this.MapLoadedCb && {}.toString.call(this.MapLoadedCb) === '[object Function]')
-                    {
-                        this.MapLoadedCb(this.Map);     
+                    if(this.MapLoadedCb && {}.toString.call(this.MapLoadedCb) === '[object Function]') {
+                        this.MapLoadedCb(data[1],data[2],data[3]);     
                     }
                     break;
                 }

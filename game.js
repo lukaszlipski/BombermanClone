@@ -9,9 +9,11 @@ class Game {
         });
         this.Bombs = [];
         this.Size = 0;
-        this.Walls = [];
+        this.SizeX = -1;
+        this.SizeY = -1;
         this.Spawns = [];
         this.Map = data;
+        this.Tiles;
         this.ProcessMap(data);
 
         this.TileSize = 1024.0/20.0;
@@ -20,7 +22,6 @@ class Game {
     }
 
     ProcessMap(data) {
-        this.Walls = [];
         this.Spawns = [];
 
         let y = 0;
@@ -30,6 +31,9 @@ class Game {
             
             switch(data[i]) {
                 case 13: {
+                    if(this.SizeX == -1) {
+                        this.SizeX = i;
+                    }
                     continue;
                 }
                 case 10: {
@@ -37,15 +41,13 @@ class Game {
                     x = 0;
                     continue;
                 }
-                case 49: {
-                    this.Walls.push({PosX : x, PosY : y});
-                    break;
-                }
                 case 57: {
                     this.Spawns.push({PosX : x, PosY : y});
                     break;
                 }
-                case 0, 48: {
+                case 48:
+                case 49:
+                case 50: {
                     break;
                 }
                 default: {
@@ -54,7 +56,40 @@ class Game {
             }
             x++;
         }
-        
+
+        this.SizeY = y;
+
+        let map = new Array(this.SizeX);
+        for(let i=0,x=0,y=0;i<data.length; ++i) {
+            
+            switch(data[i]) {
+                case 48:
+                case 49:
+                case 50:
+                case 51:
+                case 52:
+                case 53:
+                case 54:
+                case 55:
+                case 56:
+                case 57: {
+
+                    if(typeof map[x] === 'undefined') {
+                        map[x] = new Array(this.SizeY);
+                    }
+
+                    map[x++][y] = data[i];
+                    break;
+                }
+                case 13: {
+                    y++;
+                    x = 0;
+                    break;
+                }
+            }
+        }
+
+        this.Tiles = map;
     }
 
     AddPlayer(player) {
@@ -101,7 +136,7 @@ class Game {
             this.Players.forEach((player)=>{
     
                 player.Socket.send('STR|');
-                player.Socket.send('MAP|' + this.Map);
+                player.Socket.send('MAP|' + this.SizeX + '|' + this.SizeY + '|' + this.Tiles);
     
                 let x = this.Spawns[player.CurrentIndex].PosX * this.TileSize;
                 let y = this.Spawns[player.CurrentIndex].PosY * this.TileSize;
@@ -130,16 +165,18 @@ class Game {
             if(bomb != null) {
                 bomb.Update(delta);
                 if(bomb.GetIsNew()) {
-                    bombs += '|' + bomb.Index + ',' + 0 + ',' + bomb.PosX + ',' + bomb.PosY;
+                    bombs += '|' + bomb.Index + ',' + 0 + ',' + bomb.TileX + ',' + bomb.TileY;
                 }
 
                 if(bomb.IsExploding()) {
-                    // TODO : Collsion detection
-                    
+                    let data = bomb.CalculateExplosion(this, this.SizeX, this.SizeY);
 
-                    bombs += '|' + bomb.Index + ',' + 1;
+                    // TODO : Collsion detection with players
+
+                    bombs += '|' + bomb.Index + ',' + 1 + ',' + data;
                     delete this.Bombs[index];
                     this.Bombs[index] = null;
+
                 }
 
             }
@@ -167,13 +204,14 @@ class Game {
             }
         }
         if(index == -1) {
-            this.Bombs.push(new Bomb(x, y, this.Bombs.length));
+            this.Bombs.push(new Bomb(x, y, this.Bombs.length, this.TileSize));
         } else {
-            this.Bombs[index] = new Bomb(x, y, index);
+            this.Bombs[index] = new Bomb(x, y, index, this.TileSize);
         }
     }
 
 }
+
 
 
 module.exports = Game;

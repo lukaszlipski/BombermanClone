@@ -8,11 +8,13 @@ TexManager.Init();
 
 let TileSize = Core.Width/20; // 20x15
 
-let bg = new BackgroundSprite(TileSize,TileSize);
+
+let map = new Map(TileSize,TileSize);
+let bombs = [];
 
 let players = new Array(4);
 for(let i=0; i<4;++i) {
-    players[i] = new Sprite(TileSize/2,TileSize/2);
+    players[i] = new Sprite(TileSize/2,TileSize/2, 'player.png');
 }
 
 function Frame(time) {
@@ -37,8 +39,7 @@ function Frame(time) {
         
         Core.ClientSocket.send('ACT' + actions);
 
-        if(Core.ServerStatus != null)
-        {
+        if(Core.ServerStatus != null) {
             let playersStatus = Core.ServerStatus.split('|');
             playersStatus.forEach(element => {
                 
@@ -53,14 +54,42 @@ function Frame(time) {
 
         }
 
+        Core.Bombs.forEach((bomb)=>{
+            if(bomb != null) {
+                console.log(bomb);
+                let Info = bomb.split(',');
+                if(Info[1] == 0) { // new bomb
+                    bombs[Info[0]] = new Bomb(Info[2],Info[3],TileSize);
+                } else if(Info[1] == 1) { // bomb exploded
 
-        bg.Draw();
+                    let coords = Info[3].split('.');
+                    coords.forEach((coord)=>{
+                        let xy = coord.split('-');
+                        map.DestroyDestroyable(xy[0], xy[1]);
+                    });
+
+
+                    bombs[Info[0]].Destroy();
+                    delete bombs[Info[0]];
+                    bombs[Info[0]] = null;
+                }
+            }
+        });
+        Core.Bombs = [];
+
+        map.Draw();
+
+        bombs.forEach((bomb)=>{
+            if(bomb != null) {
+                bomb.Draw();
+            }
+        });
+
         players.forEach((player)=>{
             if(player != null) {
                 player.Draw();
             }
-        })
-        //sprite.Draw();
+        });
 
 }
 

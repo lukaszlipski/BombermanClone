@@ -74,18 +74,24 @@ class Player {
             let CollsionX = false;
             let CollsionY = false;
 
-            this.CurrentGame.Walls.forEach((wall)=>{
+            for(let x = 0; x < this.CurrentGame.SizeX; ++x) {
+                for(let y = 0; y < this.CurrentGame.SizeY; ++y) {
+                    let tile = this.CurrentGame.Tiles[x][y];
 
-                if(MathLib.AABB(xPos,this.CurrentPosition[1],this.PlayerSize,this.PlayerSize, 
-                        wall.PosX * this.CurrentGame.TileSize, wall.PosY * this.CurrentGame.TileSize, this.CurrentGame.TileSize, this.CurrentGame.TileSize)) {
-                    CollsionX = true;
-                }
-                if(MathLib.AABB(this.CurrentPosition[0],yPos,this.PlayerSize,this.PlayerSize, 
-                        wall.PosX * this.CurrentGame.TileSize, wall.PosY * this.CurrentGame.TileSize, this.CurrentGame.TileSize, this.CurrentGame.TileSize)) {
-                    CollsionY = true;
-                }
+                    if(tile == 49 || tile == 50) {
+                        if(MathLib.AABB(xPos,this.CurrentPosition[1],this.PlayerSize,this.PlayerSize, 
+                            x * this.CurrentGame.TileSize, y * this.CurrentGame.TileSize, this.CurrentGame.TileSize, this.CurrentGame.TileSize)) {
+                        CollsionX = true;
+                        }
+                        if(MathLib.AABB(this.CurrentPosition[0],yPos,this.PlayerSize,this.PlayerSize, 
+                                x * this.CurrentGame.TileSize, y * this.CurrentGame.TileSize, this.CurrentGame.TileSize, this.CurrentGame.TileSize)) {
+                            CollsionY = true;
+                        }
+                    }
+                    
+                }   
+            }
 
-            });
 
             if(!CollsionY) {
                 this.CurrentPosition[1] = yPos;
