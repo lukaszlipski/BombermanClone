@@ -30,14 +30,15 @@ class Bomb {
     }
 
     CalculateExplosion(game,maxTileX,maxTileY) {
-        let explosion = '0000';
+        let MaxExplosion = (this.PowerSizeInTiles - 1).toString();
+        let explosion = MaxExplosion + MaxExplosion + MaxExplosion + MaxExplosion;
         let destroyed = '';
         // TODO: simplify this function
         for(let x = 1, minus = false, plus = false; x<this.PowerSizeInTiles; ++x) {
             if(this.TileX + x < maxTileX && !plus) {
                 let tile = game.Tiles[this.TileX + x][this.TileY];
                 if(tile == 49) {
-                    explosion = ReplaceCharAt(explosion,0,x);
+                    explosion = ReplaceCharAt(explosion,0,x - 1);
                     plus = true;
                 } else if (tile == 50) {
                     explosion = ReplaceCharAt(explosion,0,x);
@@ -50,7 +51,7 @@ class Bomb {
             if(this.TileX - x >= 0 && !minus) {
                 let tile = game.Tiles[this.TileX - x][this.TileY];
                 if(tile == 49) {
-                    explosion = ReplaceCharAt(explosion,1,x);
+                    explosion = ReplaceCharAt(explosion,1,x - 1);
                     minus = true;
                 } else if (tile == 50) {
                     explosion = ReplaceCharAt(explosion,1,x);
@@ -65,7 +66,7 @@ class Bomb {
             if(this.TileY + y < maxTileY && !plus) {
                 let tile = game.Tiles[this.TileX][this.TileY + y];
                 if(tile == 49) {
-                    explosion = ReplaceCharAt(explosion,2,y);
+                    explosion = ReplaceCharAt(explosion,2,y - 1);
                     plus = true;
                 } else if (tile == 50) {
                     explosion = ReplaceCharAt(explosion,2,y);
@@ -78,7 +79,7 @@ class Bomb {
             if(this.TileY - y >= 0 && !minus) {
                 let tile = game.Tiles[this.TileX][this.TileY - y];
                 if(tile == 49) {
-                    explosion = ReplaceCharAt(explosion,3,y);
+                    explosion = ReplaceCharAt(explosion,3,y - 1);
                     minus = true;
                 } else if (tile == 50) {
                     explosion = ReplaceCharAt(explosion,3,y);

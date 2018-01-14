@@ -32,6 +32,18 @@ class Sprite {
         }
     }
 
+    SetScale(x,y) {
+        this.SizeX = x;
+        this.SizeY = y;
+        if(this.IsValid == true) {
+            this.Material.SetParam('uScale', GetScale(this.SizeX,this.SizeY,1));
+        }
+    }
+
+    GetScale() {
+        return { X : this.SizeX, Y : this.SizeY };
+    }
+
     Draw() {
         if(this.IsValid == true) {
             Core.Context.enable(Core.Context.BLEND);
