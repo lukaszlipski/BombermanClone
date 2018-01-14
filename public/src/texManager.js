@@ -27,8 +27,8 @@ let TexManager = {
             Core.Context.texImage2D(Core.Context.TEXTURE_2D, 0, Core.Context.RGBA, Core.Context.RGBA, Core.Context.UNSIGNED_BYTE, image);
             Core.Context.texParameteri(Core.Context.TEXTURE_2D, Core.Context.TEXTURE_WRAP_S, Core.Context.CLAMP_TO_EDGE);
             Core.Context.texParameteri(Core.Context.TEXTURE_2D, Core.Context.TEXTURE_WRAP_T, Core.Context.CLAMP_TO_EDGE);
-            Core.Context.texParameteri(Core.Context.TEXTURE_2D, Core.Context.TEXTURE_MIN_FILTER, Core.Context.NEAREST);
-            Core.Context.texParameteri(Core.Context.TEXTURE_2D, Core.Context.TEXTURE_MAG_FILTER, Core.Context.NEAREST);
+            Core.Context.texParameteri(Core.Context.TEXTURE_2D, Core.Context.TEXTURE_MIN_FILTER, Core.Context.LINEAR);
+            Core.Context.texParameteri(Core.Context.TEXTURE_2D, Core.Context.TEXTURE_MAG_FILTER, Core.Context.LINEAR);
             Core.Context.bindTexture(Core.Context.TEXTURE_2D, null);
             this.Textures.push({ name : name, img : tex });
             if(callback && {}.toString.call(callback) === '[object Function]')

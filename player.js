@@ -14,6 +14,8 @@ class Player {
         this.BombPlaced = 0;
         this.CurrentGame = null;
         this.PlayerSize = (1024.0/20.0)/2.0;
+        this.IsAlive = true;
+        this.Observer = false;
     }
 
     SetPosition(x,y) {

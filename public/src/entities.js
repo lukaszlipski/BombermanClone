@@ -40,6 +40,14 @@ class Entity {
 class Player extends Entity {
     constructor(tileX,tileY,tileSize) {
         super(tileX,tileY,tileSize, 'player.png');
+        this.IsAlive = true;
+    }
+
+    Kill() {
+        if(this.IsAlive) {
+            this.IsAlive = false;
+            this.Graphics.SetTexture('death.png');
+        }
     }
 }
 

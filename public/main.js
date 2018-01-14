@@ -89,6 +89,10 @@ function Frame(time) {
 
             if(status[0] != 'undefined') {
                 players[status[0]].SetPosition(status[1],status[2]);
+                if(status[3] == 'false') {
+                    let CurrentPlayer = players[status[0]];
+                    CurrentPlayer.Kill();
+                }
             }
             
         });

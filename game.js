@@ -134,14 +134,15 @@ class Game {
     StartGame() {
         //if(this.IsGameRunning == false) {
             this.Players.forEach((player)=>{
-    
-                player.Socket.send('STR|');
-                player.Socket.send('MAP|' + this.SizeX + '|' + this.SizeY + '|' + this.Tiles);
-    
-                let x = this.Spawns[player.CurrentIndex].PosX * this.TileSize;
-                let y = this.Spawns[player.CurrentIndex].PosY * this.TileSize;
-    
-                player.SetPosition(x,y);
+                if(player != null) {
+                    player.Socket.send('STR|');
+                    player.Socket.send('MAP|' + this.SizeX + '|' + this.SizeY + '|' + this.Tiles);
+        
+                    let x = this.Spawns[player.CurrentIndex].PosX * this.TileSize;
+                    let y = this.Spawns[player.CurrentIndex].PosY * this.TileSize;
+        
+                    player.SetPosition(x,y);
+                }
     
             });
             this.IsGameRunning = true;
@@ -151,11 +152,10 @@ class Game {
     Update(delta) {
         if(!this.IsGameRunning) { return; }
  
-        let update = 'UPD';    
+        // Update input from player
         this.Players.forEach((player)=>{
-            if(player != null) {
+            if(player != null && player.IsAlive) {
                 player.Update(delta);
-                update += '|' + player.CurrentIndex + ',' + player.CurrentPosition[0] + ',' + player.CurrentPosition[1];
             }
 
         });
@@ -169,7 +169,7 @@ class Game {
                 }
 
                 if(bomb.IsExploding()) {
-                    let data = bomb.CalculateExplosion(this, this.SizeX, this.SizeY);
+                    let data = bomb.CalculateExplosion(this, this.SizeX, this.SizeY, this.Players);
 
                     // TODO : Collsion detection with players
 
@@ -181,6 +181,16 @@ class Game {
 
             }
         });
+
+        // Prepare information about players
+        let update = 'UPD';    
+        this.Players.forEach((player, index)=>{
+            if(player != null) {
+                update += '|' + player.CurrentIndex + ',' + player.CurrentPosition[0] + ',' + player.CurrentPosition[1] + ',' + player.IsAlive;
+            }
+
+        });
+
 
         this.Players.forEach( (player,index,array) => {
             if(player !== null) 

@@ -1,3 +1,4 @@
+const MathLib = require('./math');
 
 class Bomb {
     constructor(posX, posY, index, tileSize) {
@@ -29,11 +30,11 @@ class Bomb {
         return status;
     }
 
-    CalculateExplosion(game,maxTileX,maxTileY) {
+    CalculateExplosion(game, maxTileX, maxTileY, players) {
+        // TODO: simplify this function
         let MaxExplosion = (this.PowerSizeInTiles - 1).toString();
         let explosion = MaxExplosion + MaxExplosion + MaxExplosion + MaxExplosion;
         let destroyed = '';
-        // TODO: simplify this function
         for(let x = 1, minus = false, plus = false; x<this.PowerSizeInTiles; ++x) {
             if(this.TileX + x < maxTileX && !plus) {
                 let tile = game.Tiles[this.TileX + x][this.TileY];
@@ -60,6 +61,18 @@ class Bomb {
                     // TODO: spawn upgrade
                     minus = true;
                 }
+            }
+
+            // Check if player is near to the bomb explosion
+            if(!plus) {
+                players.forEach((player)=>{
+                    this.CheckCollisionWithPlayer(player,(this.TileX + x) * this.Size, this.TileY * this.Size);
+                });
+            }
+            if(!minus) {
+                players.forEach((player)=>{
+                    this.CheckCollisionWithPlayer(player,(this.TileX - x) * this.Size, this.TileY * this.Size);
+                });
             }
         }
         for(let y = 1, minus = false, plus = false; y<this.PowerSizeInTiles; ++y) {
@@ -89,8 +102,41 @@ class Bomb {
                     minus = true;
                 }
             }
+
+            // Check if player is near to the bomb explosion
+            if(!plus) {
+                players.forEach((player)=>{
+                    this.CheckCollisionWithPlayer(player,this.TileX * this.Size, (this.TileY + y) * this.Size);
+                });
+            }
+            if(!minus) {
+                players.forEach((player)=>{
+                    this.CheckCollisionWithPlayer(player,this.TileX * this.Size, (this.TileY - y) * this.Size);
+                });
+            }
         }
+
+        // Check if the player is in the same place as bomb
+        players.forEach((player)=>{
+            this.CheckCollisionWithPlayer(player,this.TileX * this.Size, this.TileY * this.Size);
+        });
+
         return explosion + ',' + destroyed;
+    }
+
+    CheckCollisionWithPlayer(player,bombX,bombY) {
+        if(player != null && player.IsAlive) {
+                        
+            let PlayerX = player.CurrentPosition[0];
+            let PlayerY = player.CurrentPosition[1];
+            let PlayerSize = player.PlayerSize;
+            let CurrentExplosionX = bombX;
+            let CurrentExplosionY = bombY;
+
+            if(MathLib.AABB(PlayerX,PlayerY,PlayerSize,PlayerSize,CurrentExplosionX,CurrentExplosionY,this.Size,this.Size)) {
+                player.IsAlive = false;
+            }
+        }
     }
 
 }

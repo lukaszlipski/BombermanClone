@@ -44,6 +44,13 @@ class Sprite {
         return { X : this.SizeX, Y : this.SizeY };
     }
 
+    SetTexture(texture) {
+        this.Texture = texture;
+        if(this.IsValid == true) {
+            this.Material.SetParam('uTex', this.Texture);
+        }
+    }
+
     Draw() {
         if(this.IsValid == true) {
             Core.Context.enable(Core.Context.BLEND);
